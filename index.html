@@ -1,96 +1,638 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NL clicker — Официальный сайт</title>
+    <title>NL Clicker - Precision. Speed. Power.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'nl-black': '#050505',
+                        'nl-dark': '#0f0f0f',
+                        'nl-card': '#1a1a1a',
+                        'nl-maroon': '#800000',
+                        'nl-red': '#dc2626',
+                        'nl-border': '#2d0000',
+                        'nl-gray': '#9ca3af',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px rgba(128, 0, 0, 0.5), 0 0 20px rgba(128, 0, 0, 0.3)' },
+                            '100%': { boxShadow: '0 0 10px rgba(220, 38, 38, 0.8), 0 0 40px rgba(220, 38, 38, 0.4)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --bg: #0a0a0b;
-            --text-main: #ffffff;
-            --text-dim: #666;
-            --accent: #ffffff;
+        * {
+            font-family: 'Inter', sans-serif;
         }
-
+        
         body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
+            background-color: #050505;
+            color: #ffffff;
         }
 
-        .container {
-            padding: 20px;
-            max-width: 600px;
+        .glass-panel {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(128, 0, 0, 0.3);
         }
 
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
+        .gradient-text {
+            background: linear-gradient(135deg, #800000 0%, #dc2626 50%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .description {
-            font-size: 1.1rem;
-            color: var(--text-dim);
-            line-height: 1.6;
-            margin-bottom: 40px;
+        .hero-gradient {
+            background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(128, 0, 0, 0.3), transparent);
         }
 
-        .btn {
-            display: inline-block;
-            padding: 12px 30px;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
+        .grid-pattern {
+            background-image: linear-gradient(rgba(128, 0, 0, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(128, 0, 0, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .nav-link {
+            position: relative;
             transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #800000, #dc2626);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            border-color: rgba(220, 38, 38, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(128, 0, 0, 0.4);
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #800000 0%, #dc2626 100%);
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+        }
+
+        .click-area {
+            background: radial-gradient(circle at center, rgba(128, 0, 0, 0.2) 0%, transparent 70%);
+            transition: all 0.1s ease;
+        }
+
+        .click-area:active {
+            transform: scale(0.95);
+            background: radial-gradient(circle at center, rgba(220, 38, 38, 0.4) 0%, transparent 70%);
+        }
+
+        .stat-number {
+            font-variant-numeric: tabular-nums;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #800000;
             border-radius: 4px;
         }
-
-        .btn:hover {
-            background: var(--accent);
-            color: var(--bg);
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dc2626;
         }
 
-        footer {
-            position: absolute;
-            bottom: 30px;
-            width: 100%;
-            font-size: 11px;
-            color: #333;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .accordion-content.active {
+            max-height: 500px;
+        }
+
+        .feature-icon {
+            background: linear-gradient(135deg, rgba(128, 0, 0, 0.2) 0%, rgba(220, 38, 38, 0.1) 100%);
         }
     </style>
 </head>
-<body>
+<body class="antialiased overflow-x-hidden">
+    <header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-nl-border/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3 group cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-10 h-10 bg-gradient-to-br from-nl-maroon to-nl-red rounded-lg flex items-center justify-center shadow-lg shadow-red-900/20 group-hover:shadow-red-900/40 transition-shadow">
+                        <span class="text-white font-bold text-lg">NL</span>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight">
+                        <span class="text-white">NL</span><span class="text-nl-gray">clicker</span>
+                    </span>
+                </div>
 
-    <div class="container">
-        <div class="logo">NL clicker</div>
-        <p class="description">
-            Официальный ресурс программного обеспечения. <br>
-            В данный момент мы обновляем сайт для предоставления полной информации о софте.
-        </p>
-        
-        <!-- Ссылка на ту самую страницу "в разработке", которую мы сделали раньше -->
-        <a href="https://noizeloser.github.io/NL-clicker.com/maintenance" class="btn">Узнать больше</a>
-    </div>
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#features" class="nav-link text-nl-gray text-sm font-medium hover:text-white">Features</a>
+                    <a href="#faq" class="nav-link text-nl-gray text-sm font-medium hover:text-white">FAQ</a>
+                    <a href="#download" class="nav-link text-nl-gray text-sm font-medium hover:text-white">Download</a>
+                </nav>
 
-    <footer>
-        © NoizeLoser 2026 Все права защищены. Копирование запрещено.
+                <div class="flex items-center gap-4">
+                    <button onclick="openDownloadPage()" class="hidden sm:block bg-gradient-to-r from-nl-maroon to-nl-red hover:from-red-700 hover:to-red-600 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg shadow-red-900/20 hover:shadow-red-900/40">
+                        Get Started
+                    </button>
+                    
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-nl-gray hover:text-white">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden border-t border-nl-border bg-nl-dark">
+            <div class="px-4 py-4 space-y-3">
+                <a href="#features" class="block text-nl-gray hover:text-white py-2">Features</a>
+                <a href="#demo" class="block text-nl-gray hover:text-white py-2">Live Demo</a>
+                <a href="#faq" class="block text-nl-gray hover:text-white py-2">FAQ</a>
+                <button onclick="openDownloadPage()" class="w-full bg-gradient-to-r from-nl-maroon to-nl-red text-white px-6 py-3 rounded-lg text-sm font-semibold mt-4">
+                    Download Now
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 hero-gradient grid-pattern">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-4 py-2 glass-panel rounded-full mb-8 animate-pulse-slow">
+                    <span class="w-2 h-2 bg-nl-red rounded-full animate-pulse"></span>
+                    <span class="text-nl-gray text-xs font-medium tracking-wider uppercase">Version 1.0 Now Available</span>
+                </div>
+
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-6 leading-tight">
+                    <span class="text-white">NL</span> <span class="gradient-text">Clicker</span>
+                    <span class="block text-2xl md:text-4xl lg:text-5xl mt-4 text-nl-gray font-light">
+                        Precision. Speed. Power.
+                    </span>
+                </h1>
+
+                <p class="text-lg md:text-xl text-nl-gray max-w-2xl mx-auto mb-10 leading-relaxed">
+                    The ultimate automation tool engineered for professionals. Experience Win API level clicking precision with customizable latency.
+                </p>
+
+                <div class="grid grid-cols-2 gap-8 max-w-3xl mx-auto pt-8 border-t border-nl-border/30">
+                    <div class="text-center">
+                        <div class="text-4xl md:text-5xl font-black text-white stat-number" data-target="95.7">0</div>
+                        <div class="text-nl-gray text-sm mt-2 uppercase tracking-wider">max CPS</div>
+                    </div>
+                    <div class="text-center border-x border-nl-border/30">
+                        <div class="text-4xl md:text-5xl font-black text-white stat-number" data-target="99.9" data-suffix="%">0</div>
+                        <div class="text-nl-gray text-sm mt-2 uppercase tracking-wider">Uptime</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-20 lg:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <div class="inline-block px-4 py-2 bg-nl-maroon/10 border border-nl-maroon/30 rounded-lg mb-6">
+                        <span class="text-nl-red text-xs font-bold tracking-wider uppercase">The Engine</span>
+                    </div>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                        Advanced Clicking <br>
+                        <span class="gradient-text">Technology</span>
+                    </h2>
+                    <p class="text-nl-gray text-lg leading-relaxed mb-8">
+                        NL Clicker utilizes a proprietary high-frequency input engine that operates at the Win API level, ensuring minimal latency and maximum precision.
+                    </p>
+
+                    <div class="grid gap-4 mb-8">
+                        <div class="flex items-start gap-4 p-4 rounded-lg hover:bg-white/5 transition-colors">
+                            <div class="w-10 h-10 feature-icon rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="cpu" class="w-5 h-5 text-nl-red"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-semibold mb-1">Optimization</h3>
+                                <p class="text-nl-gray text-sm">By using winapi we achieved almost maximum optimization and minimal disk space.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4 rounded-lg hover:bg-white/5 transition-colors">
+                            <div class="w-10 h-10 feature-icon rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="zap" class="w-5 h-5 text-nl-red"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-semibold mb-1">Customization</h3>
+                                <p class="text-nl-gray text-sm">We have quite a few settings that give you freedom in customizing your clicker.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4 rounded-lg hover:bg-white/5 transition-colors">
+                            <div class="w-10 h-10 feature-icon rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="shield" class="w-5 h-5 text-nl-red"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-white font-semibold mb-1">Stealth Mode</h3>
+                                <p class="text-nl-gray text-sm">Undetectable operation ensures your automation remains private.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-5">
+                        <div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-nl-gray font-medium">Precision Rate</span>
+                                <span class="text-nl-red font-bold">99.9%</span>
+                            </div>
+                            <div class="h-2 bg-nl-dark rounded-full overflow-hidden border border-nl-border">
+                                <div class="progress-fill h-full w-[99.9%] rounded-full"></div>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-nl-gray font-medium">Max CPS</span>
+                                <span class="text-nl-red font-bold">95+ CPS</span>
+                            </div>
+                            <div class="h-2 bg-nl-dark rounded-full overflow-hidden border border-nl-border">
+                                <div class="progress-fill h-full w-[95%] rounded-full"></div>
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-nl-gray font-medium">System Stability</span>
+                                <span class="text-nl-red font-bold">95%</span>
+                            </div>
+                            <div class="h-2 bg-nl-dark rounded-full overflow-hidden border border-nl-border">
+                                <div class="progress-fill h-full w-[95%] rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="absolute -inset-4 bg-gradient-to-r from-nl-maroon/20 to-nl-red/20 rounded-3xl blur-2xl"></div>
+                    <div class="relative glass-panel rounded-2xl p-2 border border-nl-border/50">
+                        <div class="bg-nl-black rounded-xl overflow-hidden aspect-video relative flex items-center justify-center">
+                            <img src="images/interface.jpg" alt="NL Clicker Interface" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity">
+                            <div class="absolute inset-0 bg-gradient-to-t from-nl-black via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <div class="flex items-center gap-2 text-sm text-nl-gray">
+                                    <i data-lucide="monitor" class="w-4 h-4"></i>
+                                    <span>Interface Preview v1.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-nl-dark/30 border-y border-nl-border/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Explore <span class="text-nl-red">Resources</span></h2>
+                <p class="text-nl-gray max-w-xl mx-auto">Everything you need to master NL Clicker and maximize your productivity.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <a href="https://noizeloser.github.io/NL-clicker.com/maintenance" class="glass-panel rounded-2xl p-8 card-hover border border-nl-border/50 block group">
+                    <div class="w-14 h-14 feature-icon rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="users" class="w-7 h-7 text-nl-red"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 group-hover:text-nl-red transition-colors">Community</h3>
+                    <p class="text-nl-gray text-sm leading-relaxed mb-4">Join thousands of users sharing macros, tips, and automation strategies.</p>
+                    <div class="flex items-center text-nl-red text-sm font-medium">
+                        <span>Join Discord</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </a>
+
+                <a href="https://noizeloser.github.io/NL-clicker.com/maintenance" class="glass-panel rounded-2xl p-8 card-hover border border-nl-border/50 block group">
+                    <div class="w-14 h-14 feature-icon rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="book-open" class="w-7 h-7 text-nl-red"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 group-hover:text-nl-red transition-colors">Documentation</h3>
+                    <p class="text-nl-gray text-sm leading-relaxed mb-4">Comprehensive guides covering setup, configuration, and advanced features.</p>
+                    <div class="flex items-center text-nl-red text-sm font-medium">
+                        <span>Read Docs</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </a>
+
+                <a href="https://noizeloser.github.io/NL-clicker.com/maintenance" class="glass-panel rounded-2xl p-8 card-hover border border-nl-border/50 block group">
+                    <div class="w-14 h-14 feature-icon rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="headphones" class="w-7 h-7 text-nl-red"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 group-hover:text-nl-red transition-colors">Support</h3>
+                    <p class="text-nl-gray text-sm leading-relaxed mb-4">24/7 technical assistance and troubleshooting from our expert team.</p>
+                    <div class="flex items-center text-nl-red text-sm font-medium">
+                        <span>Get Help</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-20 lg:py-32">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Frequently <span class="text-nl-red">Asked</span></h2>
+                <p class="text-nl-gray">Common questions about NL Clicker answered.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="glass-panel rounded-xl border border-nl-border/50 overflow-hidden">
+                    <button onclick="toggleAccordion(1)" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+                        <span class="font-semibold text-white">Is NL Clicker detectable by anti-cheat systems?</span>
+                        <i data-lucide="chevron-down" id="icon-1" class="w-5 h-5 text-nl-gray transition-transform"></i>
+                    </button>
+                    <div id="content-1" class="accordion-content">
+                        <div class="px-6 pb-4 text-nl-gray text-sm leading-relaxed">
+                            NL Clicker operates at the Win API level, making it virtually undetectable by standard anti-cheat systems. However, we recommend using it only in single-player environments or where automation is explicitly permitted.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl border border-nl-border/50 overflow-hidden">
+                    <button onclick="toggleAccordion(2)" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+                        <span class="font-semibold text-white">What is the maximum CPS rate?</span>
+                        <i data-lucide="chevron-down" id="icon-2" class="w-5 h-5 text-nl-gray transition-transform"></i>
+                    </button>
+                    <div id="content-2" class="accordion-content">
+                        <div class="px-6 pb-4 text-nl-gray text-sm leading-relaxed">
+                            NL Clicker supports up to 95+ CPS. 
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl border border-nl-border/50 overflow-hidden">
+                    <button onclick="toggleAccordion(3)" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+                        <span class="font-semibold text-white">Is there a paid version?</span>
+                        <i data-lucide="chevron-down" id="icon-3" class="w-5 h-5 text-nl-gray transition-transform"></i>
+                    </button>
+                    <div id="content-3" class="accordion-content">
+                        <div class="px-6 pb-4 text-nl-gray text-sm leading-relaxed">
+                            The base version of NL Clicker is completely free. We offer a Pro version with advanced macro scripting, cloud profiles, and priority support for a one-time purchase of (not done yet).
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-xl border border-nl-border/50 overflow-hidden">
+                    <button onclick="toggleAccordion(4)" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+                        <span class="font-semibold text-white">What operating systems are supported?</span>
+                        <i data-lucide="chevron-down" id="icon-4" class="w-5 h-5 text-nl-gray transition-transform"></i>
+                    </button>
+                    <div id="content-4" class="accordion-content">
+                        <div class="px-6 pb-4 text-nl-gray text-sm leading-relaxed">
+                            NL Clicker currently supports Windows 10/11 (64-bit). macOS and Linux support is planned.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="download" class="py-20 lg:py-32 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-nl-maroon/10 to-nl-red/10"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h2 class="text-4xl md:text-6xl font-bold mb-6">Ready to <span class="gradient-text">Dominate</span>?</h2>
+            <p class="text-nl-gray text-lg mb-8 max-w-2xl mx-auto">Join users who have already upgraded their clicking experience. Download NL Clicker today.</p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button onclick="openDownloadPage()" class="bg-white text-nl-black px-8 py-4 rounded-lg font-bold text-lg hover:bg-nl-gray transition-colors w-full sm:w-auto">
+                    Download for Windows
+                </button>
+                <button class="glass-panel border border-nl-border text-white px-8 py-4 rounded-lg font-semibold hover:border-nl-red transition-colors w-full sm:w-auto flex items-center justify-center gap-2">
+                    <i data-lucide="github" class="w-5 h-5"></i>
+                    View Source
+                </button>
+            </div>
+            
+            <p class="text-nl-gray text-xs mt-6">Free forever. No credit card required.</p>
+        </div>
+    </section>
+
+    <footer class="border-t border-nl-border/50 bg-nl-dark/30 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-nl-maroon to-nl-red rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">NL</span>
+                        </div>
+                        <span class="text-xl font-bold">
+                            <span class="text-white">NL</span><span class="text-nl-gray">clicker</span>
+                        </span>
+                    </div>
+                    <p class="text-nl-gray text-sm leading-relaxed max-w-xs mb-6">
+                        Professional automation tools for serious users. Built with precision, designed for performance.
+                    </p>
+                    <div class="flex gap-3">
+                        <a href="#" class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center text-nl-gray hover:text-nl-red hover:border-nl-red transition-colors">
+                            <i data-lucide="github" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 glass-panel rounded-lg flex items-center justify-center text-nl-gray hover:text-nl-red hover:border-nl-red transition-colors">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="text-nl-gray text-sm hover:text-nl-red transition-colors">Features</a></li>
+                        <li><a href="#download" class="text-nl-gray text-sm hover:text-nl-red transition-colors">Download</a></li>
+                        <li><a href="https://noizeloser.github.io/NL-clicker.com/maintenance" class="text-nl-gray text-sm hover:text-nl-red transition-colors">Changelog</a></li>
+                        <li><a href="https://noizeloser.github.io/NL-clicker.com/maintenance" class="text-nl-gray text-sm hover:text-nl-red transition-colors">Roadmap</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="https://noizeloser.github.io/NL-clicker.com/maintenance" class="text-nl-gray text-sm hover:text-nl-red transition-colors">Privacy Policy</a></li>
+                        <li><a href="https://noizeloser.github.io/NL-clicker.com/maintenance" class="text-nl-gray text-sm hover:text-nl-red transition-colors">Terms of Service</a></li>
+                        <li><a href="https://noizeloser.github.io/NL-clicker.com/maintenance" class="text-nl-gray text-sm hover:text-nl-red transition-colors">License</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-nl-border/30 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-nl-gray text-sm">© 2024 NoizeLoser. All rights reserved.</p>
+                <p class="text-nl-gray text-xs">Designed with precision. Built for speed.</p>
+            </div>
+        </div>
     </footer>
 
+    <script>
+        lucide.createIcons();
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function toggleAccordion(id) {
+            const content = document.getElementById(`content-${id}`);
+            const icon = document.getElementById(`icon-${id}`);
+            
+            content.classList.toggle('active');
+            if (content.classList.contains('active')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function openDownloadPage(){
+            window.location.href = 'https://noizeloser.github.io/NL-clicker.com/maintenance'
+        }
+
+        function createRipple(event) {
+            const container = document.getElementById('ripple-container');
+            const rect = event.currentTarget.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const ripple = document.createElement('div');
+            ripple.style.position = 'absolute';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.style.width = '20px';
+            ripple.style.height = '20px';
+            ripple.style.background = 'rgba(220, 38, 38, 0.5)';
+            ripple.style.borderRadius = '50%';
+            ripple.style.transform = 'translate(-50%, -50%) scale(0)';
+            ripple.style.animation = 'ripple 0.6s linear';
+            ripple.style.pointerEvents = 'none';
+            
+            container.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: translate(-50%, -50%) scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        function animateStats() {
+            const stats = document.querySelectorAll('.stat-number');
+            
+            stats.forEach(stat => {
+                const target = parseFloat(stat.getAttribute('data-target'));
+                const suffix = stat.getAttribute('data-suffix') || '';
+                const duration = 2000;
+                const step = target / (duration / 16);
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    
+                    if (target % 1 !== 0) {
+                        stat.textContent = current.toFixed(1) + suffix;
+                    } else {
+                        stat.textContent = Math.floor(current).toLocaleString() + suffix;
+                    }
+                }, 16);
+            });
+        }
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('stat-number')) {
+                        animateStats();
+                        observer.unobserve(entry.target);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-number').forEach(stat => {
+            observer.observe(stat);
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                header.classList.add('shadow-lg', 'shadow-black/20');
+            } else {
+                header.classList.remove('shadow-lg', 'shadow-black/20');
+            }
+            
+            lastScroll = currentScroll;
+        });
+    </script>
 </body>
 </html>
