@@ -6,52 +6,103 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Раздел недоступен</title>
+    <title>Доступ ограничен — NL</title>
     <style>
+        :root {
+            --bg: #050505;
+            --accent: #ffffff;
+            --text-muted: #888;
+            --border: #1a1a1a;
+        }
+
         body {
-            background-color: #050505;
-            color: #ffffff;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto;
+            background-color: var(--bg);
+            color: var(--accent);
+            font-family: -apple-system, system-ui, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            overflow: hidden;
         }
+
         .container {
-            text-align: center;
-            border-left: 2px solid #333;
-            padding: 20px 40px;
+            text-align: left;
+            border-left: 1px solid var(--accent);
+            padding: 10px 40px;
+            max-width: 500px;
+            animation: fadeIn 0.8s ease-out;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
         h1 {
-            font-size: 24px;
-            font-weight: 500;
-            margin: 0 0 10px 0;
-            color: #eee;
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+            letter-spacing: -0.5px;
         }
+
         p {
-            font-size: 15px;
-            color: #888;
-            margin: 0;
-            line-height: 1.6;
+            font-size: 16px;
+            color: var(--text-muted);
+            margin: 0 0 30px 0;
+            line-height: 1.5;
         }
-        .info {
-            margin-top: 25px;
-            font-size: 12px;
-            color: #444;
+
+        .btn-back {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            border: 1px solid #333;
+            padding: 8px 20px;
+            transition: 0.3s;
+        }
+
+        .btn-back:hover {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+
+        .info {
+            margin-top: 40px;
+            font-size: 10px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 30px;
+            font-size: 11px;
+            color: #222;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h1>Функционал временно недоступен</h1>
+        <h1>Секция в разработке</h1>
         <p>Извините, но данный функционал либо ещё не доделан, либо это «заглушка» на другую страницу сайта, пока та находится в разработке.</p>
-        <div class="info">Development Mode / Access Restricted</div>
+        
+        <a href="javascript:history.back()" class="btn-back">Вернуться назад</a>
+        
+        <div class="info">Status: Maintenance / Dev Mode</div>
     </div>
-        <footer>
+
+    <footer>
         © NoizeLoser 2026 Все права защищены. Копирование запрещено.
     </footer>
+
 </body>
 </html>
