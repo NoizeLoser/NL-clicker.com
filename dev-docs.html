@@ -236,7 +236,8 @@
 
                 const heading = document.createElement('h2');
                 heading.id = section.id;
-                heading.className = `gradient-text font-bold py-2 sticky top-0 bg-nl-black ${sizeMap[weight] || 'text-2xl'} border-l-2 border-nl-red/20 pl-4`;
+                // ДОБАВЛЕНО: z-10 для приоритета слоя поверх контента
+                heading.className = `gradient-text font-bold py-2 sticky top-0 z-10 bg-nl-black ${sizeMap[weight] || 'text-2xl'} border-l-2 border-nl-red/20 pl-4`;
                 heading.textContent = section.title;
                 sectionWrapper.appendChild(heading);
 
@@ -254,7 +255,7 @@
                     console.log(`Найдено таблиц в секции ${section.id}:`, section.tables.length);
                     section.tables.forEach(tableData => {
                         const tableEl = buildTable(tableData);
-                        sectionWrapper.appendChild(tableEl);
+                        sectionWrapper.appendChild(tableEl);    
                     });
                 } else {
                     console.warn(`В секции ${section.id} таблиц не обнаружено или формат неверный.`);
@@ -279,7 +280,7 @@
 
         async function loadDoc() {
             try {
-                const r = await fetch('data/pluginDevDoc.json');
+                const r = await fetch('data/doc.json');
                 if (!r.ok) throw new Error(`HTTP ${r.status}`);;
                 const doc = await r.json();
 
