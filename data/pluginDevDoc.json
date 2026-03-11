@@ -15,15 +15,7 @@
             "blocks": [
                 {
                     "title": "1. UIRegistry (Anchor Registry)",
-                    "content": "Purpose: Stores references to the physical frames (ctk.CTkFrame) of the main application.\nAccess: Plugins access these via string aliases (e.g., \"sidebar\", \"footer\", \"MainWindowPluginFrame\") defined by the core.\nPermissions: Public get / try_get methods are open to all plugins.",
-                    "is_code": false,
-                    "expanded": true,
-                    "blocks": [],
-                    "tables": []
-                },
-                {
-                    "title": "2. RedactableDataRegistry (Data Registry)",
-                    "content": "Purpose: A universal store for class objects, logic modules, settings, or primitive variables (int, str, bool).",
+                    "content": "Purpose: Stores references to the physical frames (ctk.CTkFrame) of the main application.\nAccess: Publicly accessible within the application scope. Plugins access these via string aliases defined by the core or other plugins.\n",
                     "is_code": false,
                     "expanded": true,
                     "blocks": [],
@@ -36,21 +28,196 @@
                             "rows": [
                                 [
                                     "READ Access",
-                                    "get / try_get methods are restricted. They can only be invoked through PluginContext. Accessing them from the Global Scope will trigger a PermissionError."
+                                    "Methods: has, get_anchor, try_get_anchor. These methods provide open access to retrieve stored instances without additional security constraints."
                                 ],
                                 [
                                     "WRITE Access",
-                                    "bind / bind_by_type methods are open, allowing plugins to share their own objects or data with others."
+                                    "Methods: add_frame, add_frames_list, register_auto_incremental, register_by_type, register_frames_list, remove_frame. Used for manual or automated frame registration."
+                                ]
+                            ]
+                        },
+                        {
+                            "headers": [
+                                "Method",
+                                "Description"
+                            ],
+                            "rows": [
+                                [
+                                    "add_frame(name, frame)",
+                                    "Registers a single CTkFrame under a unique key. Validates if the name is already taken."
+                                ],
+                                [
+                                    "add_frames_list(frames_dict)",
+                                    "Batch registers a dictionary {name: frame}. Performs pre-validation on all elements."
+                                ],
+                                [
+                                    "register_auto_incremental(frame, prefix)",
+                                    "Generates a unique key (e.g., frame_1) and registers the frame automatically."
+                                ],
+                                [
+                                    "register_by_type(frame)",
+                                    "Uses the class name as a key, adding suffixes if the name exists."
+                                ],
+                                [
+                                    "register_frames_list(frames, prefix)",
+                                    "Takes a list of frames and registers them using auto-incremental naming."
+                                ],
+                                [
+                                    "remove_frame(name)",
+                                    "Removes a frame by name and returns it."
+                                ],
+                                [
+                                    "has(name)",
+                                    "Checks if a name is registered."
+                                ],
+                                [
+                                    "get_anchor(name)",
+                                    "Returns a frame by name or None."
+                                ],
+                                [
+                                    "try_get_anchor(name, default)",
+                                    "Safely returns a frame or a fallback value."
                                 ]
                             ]
                         }
                     ]
                 },
                 {
-                    "title": "Usage",
-                    "content": "from Registers import ui_registry as uireg, redactable_data_registry as rdr",
-                    "is_code": true,
+                    "title": "2. RedactableDataRegistry (Data Registry)",
+                    "content": "Purpose: A universal store for class objects, modules, or primitive variables. Features strict caller validation.",
+                    "is_code": false,
                     "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Access Type",
+                                "Description"
+                            ],
+                            "rows": [
+                                [
+                                    "READ Access",
+                                    "Methods: get, try_get. Strictly restricted to 'PluginContext' callers. Direct access from Global Scope is forbidden."
+                                ],
+                                [
+                                    "WRITE Access",
+                                    "Methods: bind, bind_batch, bind_auto, bind_by_type. Open for data sharing between system components."
+                                ]
+                            ]
+                        },
+                        {
+                            "headers": [
+                                "Method",
+                                "Description"
+                            ],
+                            "rows": [
+                                [
+                                    "bind(name, value)",
+                                    "Registers a value with a unique name. Throws KeyError on conflict."
+                                ],
+                                [
+                                    "bind_batch(mapping)",
+                                    "Registers multiple items from a dictionary."
+                                ],
+                                [
+                                    "bind_auto(value, prefix)",
+                                    "Auto-generates a unique name with a counter."
+                                ],
+                                [
+                                    "bind_by_type(value)",
+                                    "Registers using the class name as a key."
+                                ],
+                                [
+                                    "get(name) / try_get(name)",
+                                    "Retrieves data. Performs 'inspect.stack' validation to verify the caller."
+                                ],
+                                [
+                                    "list_resources",
+                                    "Property returning all registered keys."
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "PLUGIN LIFECYCLE",
+            "id": "section-lifecycle",
+            "weight": 2,
+            "text": "Understanding how the core triggers plugin logic.",
+            "blocks": [
+                {
+                    "title": "Event Hooks",
+                    "content": "The PluginManager interacts with your main class through specific method hooks.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Method",
+                                "Triggered When..."
+                            ],
+                            "rows": [
+                                [
+                                    "__init__(self, ctx)",
+                                    "The plugin is first recognized and instantiated. Use this only for internal variable setup."
+                                ],
+                                [
+                                    "on_enable(self)",
+                                    "Called immediately after loading or when the user clicks 'Run' in the Manager. This is the place to mount UI and start logic."
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "PLUGIN CONTEXT API",
+            "id": "section-plugin-context-root",
+            "weight": 1,
+            "text": "The PluginContext class serves as the primary interface for plugins to interact with the core application. It acts as a secure sandbox and service provider, granting access to UI mounting, window management, and persistent storage.",
+            "blocks": [
+                {
+                    "title": "Core Concept",
+                    "content": "Each plugin receives its own unique instance of PluginContext upon initialization. This instance is pre-configured with the plugin's ID, dedicated data paths, and a reference to the main application's resource importer.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Attribute",
+                                "Description"
+                            ],
+                            "rows": [
+                                [
+                                    "id",
+                                    "The unique identifier of the plugin."
+                                ],
+                                [
+                                    "data_path",
+                                    "Path to the plugin's dedicated folder for local storage and configs."
+                                ],
+                                [
+                                    "archive_path",
+                                    "Path to the plugin's .zip source for internal resource loading."
+                                ],
+                                [
+                                    "main_window",
+                                    "A property returning the reference to the main application instance."
+                                ]
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Initialization & Environment",
+                    "content": "When a plugin is loaded, the context automatically creates its data directory and initializes a zipimporter for resource management. This ensures that the plugin is 'ready-to-go' without manual environment setup.",
+                    "is_code": false,
+                    "expanded": false,
                     "blocks": [],
                     "tables": []
                 }
@@ -60,11 +227,11 @@
             "title": "UI INTERFACE",
             "id": "section-1773241000003",
             "weight": 2,
-            "text": "Methods for mounting and managing user interface elements.",
+            "text": "Methods for mounting, managing, and disposing of user interface elements within the core application or dedicated plugin windows.",
             "blocks": [
                 {
-                    "title": "Mounting Methods",
-                    "content": "",
+                    "title": "Mounting & Layout",
+                    "content": "The system uses a 'SmartLayout' manager to handle widget positioning and Z-index (weight). This allows multiple plugins to share the same anchor point without overlapping issues.",
                     "is_code": false,
                     "expanded": true,
                     "blocks": [],
@@ -77,31 +244,77 @@
                             "rows": [
                                 [
                                     "mount_ui(anchor_name, widget_cls, weight=-1, **kwargs)",
-                                    "Mounts a widget into a predefined core frame.\n- anchor_name (str): Target frame alias from UIRegistry.\n- widget_cls (class): The widget class to instantiate (e.g., ctk.CTkButton).\n- weight (int): Sorting order. 0 for top, 100 for bottom, -1 to append.\n- **kwargs: Args passed directly to the widget (text, command, etc)."
+                                    "Mounts a widget into a core frame.\n- anchor_name (str): Target alias from UIRegistry.\n- widget_cls: The class to instantiate.\n- weight (int): Lower values appear first. -1 appends to the end.\n- **kwargs: Standard CTk arguments."
                                 ],
                                 [
                                     "add_to_window(widget_cls, weight=-1, **kwargs)",
-                                    "Adds a widget to the plugin's private dedicated window."
+                                    "Instantiates and adds a widget to the current plugin's Toplevel window using the internal SmartLayout."
                                 ],
                                 [
                                     "set_window_content(frame_cls, **kwargs)",
-                                    "Replaces the entire content of the plugin window with a new container (e.g., ctk.CTkScrollableFrame). This clears the window before insertion."
+                                    "Clears the plugin window and mounts a single container (like a ScrollableFrame) as the primary content area."
                                 ]
                             ]
-                        },
+                        }
+                    ]
+                },
+                {
+                    "title": "SmartLayout Engine",
+                    "content": "All UI mounting is handled by SmartLayout, which ensures widgets are correctly ordered even when added by different plugins.",
+                    "is_code": false,
+                    "expanded": false,
+                    "blocks": [],
+                    "tables": [
                         {
                             "headers": [
-                                "Unmounting",
+                                "Weight Value",
+                                "Positioning Strategy"
+                            ],
+                            "rows": [
+                                [
+                                    "-1 or 999",
+                                    "Low priority. Appends the widget to the bottom of the list (Default)."
+                                ],
+                                [
+                                    "0 or negative",
+                                    "High priority. Stays at the very top (e.g., headers)."
+                                ],
+                                [
+                                    "1 - 998",
+                                    "Standard priority. Sorted numerically."
+                                ],
+                                [
+                                    "Equal weights",
+                                    "Sorted by the order they were added (Internal counter)."
+                                ]
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Cleanup & Destruction",
+                    "content": "Proper unmounting is crucial for preventing memory leaks and ghost widgets when a plugin is disabled or reloaded.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Method",
                                 "Description"
                             ],
                             "rows": [
                                 [
                                     "unmount_ui(widget_instance)",
-                                    "Removes a specific widget instance from the UI."
+                                    "Destroys a specific widget and removes its reference from the internal tracking list and layout manager."
                                 ],
                                 [
                                     "unmount_all()",
-                                    "Instantly destroys all UI elements created by the plugin."
+                                    "Iterates through all spawned widgets in reverse order and destroys them. Automatically called during plugin shutdown."
+                                ],
+                                [
+                                    "clear_window()",
+                                    "Destroys all children within the dedicated plugin window and resets its internal layout registry."
                                 ]
                             ]
                         }
@@ -113,11 +326,11 @@
             "title": "PLUGIN WINDOW MANAGEMENT",
             "id": "section-1773241000004",
             "weight": 2,
-            "text": "Controls for the plugin-specific window.",
+            "text": "Comprehensive controls for the plugin's dedicated Toplevel window.",
             "blocks": [
                 {
-                    "title": "Window API",
-                    "content": "",
+                    "title": "Lifecycle & State",
+                    "content": "The plugin window is lazily initialized via 'get_window'. It remains transient to the main application, meaning it stays above it or closes with it.",
                     "is_code": false,
                     "expanded": true,
                     "blocks": [],
@@ -125,40 +338,32 @@
                         {
                             "headers": [
                                 "Method",
-                                "Function"
+                                "Function / Details"
                             ],
                             "rows": [
                                 [
-                                    "get_window(title, min_size=(400,300), max_size=None, fix_size=None)",
-                                    "Initializes the window. Use fix_size='500x500' to disable resizing."
-                                ],
-                                [
-                                    "Window States",
-                                    "show_window(), hide_window(), lift_window(), center_window() - Standard controls."
-                                ],
-                                [
-                                    "set_window_title(text)",
-                                    "Updates the window title dynamically."
+                                    "get_window(title, min_size, max_size, fix_size)",
+                                    "Creates or retrieves the window. If 'fix_size' (e.g., '600x400') is provided, resizing is disabled."
                                 ],
                                 [
                                     "set_close_handler(callback)",
-                                    "Sets a function to be executed when the window's close (X) button is pressed."
+                                    "Overrides the WM_DELETE_WINDOW protocol. Useful for custom cleanup or confirmation dialogs."
+                                ],
+                                [
+                                    "show_window() / hide_window()",
+                                    "Uses deiconify/withdraw to toggle visibility without destroying the window state."
+                                ],
+                                [
+                                    "close_window()",
+                                    "Triggers 'unmount_all' and destroys the window instance. Resets the internal reference to None."
                                 ]
                             ]
                         }
                     ]
-                }
-            ]
-        },
-        {
-            "title": "DATA & RESOURCES",
-            "id": "section-1773241000005",
-            "weight": 3,
-            "text": "Handling external files and remote data.",
-            "blocks": [
+                },
                 {
-                    "title": "Methods",
-                    "content": "",
+                    "title": "Geometry & Appearance",
+                    "content": "Methods for precise positioning and visual behavior of the window.",
                     "is_code": false,
                     "expanded": true,
                     "blocks": [],
@@ -170,20 +375,24 @@
                             ],
                             "rows": [
                                 [
-                                    "update_remote_value(registry_key, attr_name, new_value)",
-                                    "Updates an attribute of an object or a primitive in RedactableDataRegistry. Type must match."
+                                    "center_window()",
+                                    "Calculates and sets the window position exactly at the center of the Main Application's current geometry."
                                 ],
                                 [
-                                    "get_resource(path)",
-                                    "Returns bytes of a file located inside the .nlp package (e.g., 'assets/icon.png')."
+                                    "set_window_on_top(stay_on_top)",
+                                    "Toggles the '-topmost' attribute. If True, the window stays above all other application windows."
                                 ],
                                 [
-                                    "save_config(data, name='config.json')",
-                                    "Store a dictionary in the application's AppData folder."
+                                    "get_window_pos()",
+                                    "Returns a tuple (x, y, width, height) of the current window state."
                                 ],
                                 [
-                                    "load_config(name='config.json')",
-                                    "Retrieve a dictionary from the application's AppData folder."
+                                    "set_window_pos(x, y)",
+                                    "Moves the window to specific screen coordinates using geometry offsets."
+                                ],
+                                [
+                                    "set_window_title(new_title)",
+                                    "Updates the window title bar text dynamically."
                                 ]
                             ]
                         }
@@ -192,14 +401,133 @@
             ]
         },
         {
-            "title": "SERVICE",
+            "title": "DATA & RESOURCES",
+            "id": "section-1773241000005",
+            "weight": 2,
+            "text": "Methods for interacting with the plugin's package resources, persistent storage, and remote registry synchronization.",
+            "blocks": [
+                {
+                    "title": "Remote Data Synchronization",
+                    "content": "The 'update_remote_value' method is a powerful tool for reactive data binding between the plugin and core objects stored in the RedactableDataRegistry.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Method",
+                                "Logic & Validation"
+                            ],
+                            "rows": [
+                                [
+                                    "update_remote_value(registry_key, attr_name, new_value)",
+                                    "Updates a target attribute. Supports both direct assignment and .set() methods (for CTk/Tk variables). Validates that the 'new_value' type matches the current one to prevent runtime crashes."
+                                ]
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Package & File System",
+                    "content": "Plugins operate within a dedicated environment, using a zip-importer for internal assets and a specific AppData subdirectory for user configs.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Method",
+                                "Operation"
+                            ],
+                            "rows": [
+                                [
+                                    "get_resource(path)",
+                                    "Extracts file content as bytes directly from the plugin's .nlp (ZIP) archive without manual extraction."
+                                ],
+                                [
+                                    "save_config(data, name)",
+                                    "Serializes a dictionary to JSON and saves it to the plugin's 'data_path' (local AppData). Ensures the directory exists before saving."
+                                ],
+                                [
+                                    "load_config(name)",
+                                    "Reads and parses a JSON config file. Returns an empty dictionary if the file is missing or corrupted."
+                                ],
+                                [
+                                    "data_path / archive_path",
+                                    "Properties providing direct Path objects to the plugin's working directory and source package."
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "SERVICE & UTILITIES",
             "id": "section-1773241000006",
-            "weight": 3,
-            "text": "Utility tools and properties.",
+            "weight": 2,
+            "text": "Auxiliary tools for system logging and direct core access.",
             "blocks": [
                 {
                     "title": "Logging & Core Access",
-                    "content": "log(message, level=\"INFO\"): Sends a message to the core logger. Levels: \"INFO\", \"WARN\", \"ERROR\".\nmain_window (Property): A direct reference to the main application window. Use this as the master for your own custom Toplevel windows or complex widgets.",
+                    "content": "The PluginContext provides shortcuts to essential system services like the centralized logger and the main application instance.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Feature",
+                                "Description / Usage"
+                            ],
+                            "rows": [
+                                [
+                                    "log(message, level='INFO')",
+                                    "Submits a formatted message to the core logging engine. Supported levels: INFO (general), WARN (non-critical issues), ERROR (failures)."
+                                ],
+                                [
+                                    "main_window (Property)",
+                                    "Returns a direct reference to the core CTk application. Essential when creating custom Toplevel windows or performing global UI operations."
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "QUICK START GUIDE",
+            "id": "section-1773241000007",
+            "weight": 1,
+            "text": "Follow these steps to build, package, and deploy your first functional plugin for the system.",
+            "blocks": [
+                {
+                    "title": "1. Directory Structure",
+                    "content": "MyPlugin/\n├── manifest.json      # Metadata and entry point definition\n├── main.py            # Main logic and UI mounting\n├── assets/            # Internal resources (images, icons, etc.)\n└── libs/              # External python modules or binary extensions",
+                    "is_code": true,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                },
+                {
+                    "title": "2. Manifest (manifest.json)",
+                    "content": "{\n    \"id\": \"my_unique_plugin\",\n    \"name\": \"Example Tool\",\n    \"version\": \"1.0.0\",\n    \"main_class\": \"PluginMain\"\n}",
+                    "is_code": true,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                },
+                {
+                    "title": "3. Entry Point (main.py)",
+                    "content": "class PluginMain:\n    def __init__(self, ctx):\n        # ctx is an instance of PluginContext\n        self.ctx = ctx \n\n    def on_enable(self):\n        self.ctx.log(\"Initializing UI...\")\n        # Mount a button to the main frame via UIRegistry anchor\n        self.ctx.mount_ui(\n            anchor_name=\"MainWindowPluginFrame\", \n            widget_cls=ctk.CTkButton, \n            text=\"Hello Core!\", \n            command=lambda: self.ctx.log(\"Button clicked!\")\n        )",
+                    "is_code": true,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                },
+                {
+                    "title": "4. Deployment",
+                    "content": "1. Select all files inside your project folder.\n2. Compress them into a ZIP archive.\n3. Change the file extension from .zip to .nlp.\n4. Move the file to: %APPDATA%/NL-clicker/plugins/\n5. Restart the application to load the plugin.",
                     "is_code": false,
                     "expanded": true,
                     "blocks": [],
@@ -208,38 +536,14 @@
             ]
         },
         {
-            "title": "QUICK START GUIDE",
-            "id": "section-1773241000007",
-            "weight": 4,
-            "text": "Step-by-step guide to build and deploy your plugin.",
+            "title": "EXTERNAL LIBRARIES",
+            "id": "section-libs-management",
+            "weight": 2,
+            "text": "The system features an automated dependency manager for external Python modules.",
             "blocks": [
                 {
-                    "title": "1. Directory Structure",
-                    "content": "MyPlugin/\n├── manifest.json      # Metadata (required)\n├── main.py            # Entry point (required)\n├── assets/            # Resources (optional)\n└── libs/              # External .pyd/.py libraries (optional)",
-                    "is_code": true,
-                    "expanded": true,
-                    "blocks": [],
-                    "tables": []
-                },
-                {
-                    "title": "2. Manifest (manifest.json)",
-                    "content": "{\n    \"id\": \"unique_id_1\",\n    \"name\": \"My Plugin\",\n    \"version\": \"1.0.5\",\n    \"main_class\": \"MainClass\"\n}",
-                    "is_code": true,
-                    "expanded": true,
-                    "blocks": [],
-                    "tables": []
-                },
-                {
-                    "title": "3. Entry Point (main.py)",
-                    "content": "class MainClass:\n    def __init__(self, ctx):\n        self.ctx = ctx  # Bridge to the API\n\n    def on_enable(self):\n        self.ctx.log(\"Plugin activated!\")\n        self.ctx.mount_ui(\"MainWindowPluginFrame\", ctk.CTkButton, text=\"Click Me!\", weight=0)",
-                    "is_code": true,
-                    "expanded": true,
-                    "blocks": [],
-                    "tables": []
-                },
-                {
-                    "title": "4. Deployment",
-                    "content": "1. Select the contents of MyPlugin/.\n2. Create a ZIP archive.\n3. Rename the extension to .nlp.\n4. Place it in %APPDATA%/NL-clicker/plugins/.",
+                    "title": "The 'libs' folder",
+                    "content": "If your plugin requires third-party libraries (e.g., requests, PIL, or custom .pyd binaries), place them in a /libs folder inside your .nlp archive.\n\nUpon loading, the PluginManager will:\n1. Extract these libraries to the plugin's dedicated data folder.\n2. Automatically inject the path into 'sys.path'.\n3. Re-extract only if the plugin version in manifest.json changes.",
                     "is_code": false,
                     "expanded": true,
                     "blocks": [],
