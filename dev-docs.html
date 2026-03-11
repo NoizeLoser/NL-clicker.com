@@ -223,6 +223,7 @@
             return wrapper;
         }
 
+
         function renderDoc(doc) {
             const main = document.getElementById('main');
             const toc = document.getElementById('toc');
@@ -236,7 +237,6 @@
 
                 const heading = document.createElement('h2');
                 heading.id = section.id;
-                // ДОБАВЛЕНО: z-10 для приоритета слоя поверх контента
                 heading.className = `gradient-text font-bold py-2 sticky top-0 z-10 bg-nl-black ${sizeMap[weight] || 'text-2xl'} border-l-2 border-nl-red/20 pl-4`;
                 heading.textContent = section.title;
                 sectionWrapper.appendChild(heading);
