@@ -1,0 +1,251 @@
+{
+    "sections": [
+        {
+            "title": "NL-Clicker Plugin API SDK",
+            "id": "section-1773241000001",
+            "weight": 0,
+            "text": "Reference documentation for developing plugins for the NL-Clicker application.",
+            "blocks": []
+        },
+        {
+            "title": "REGISTRY ARCHITECTURE",
+            "id": "section-1773241000002",
+            "weight": 1,
+            "text": "The system utilizes two global repositories (Singletons) to facilitate communication between the plugin and the core.",
+            "blocks": [
+                {
+                    "title": "1. UIRegistry (Anchor Registry)",
+                    "content": "Purpose: Stores references to the physical frames (ctk.CTkFrame) of the main application.\nAccess: Plugins access these via string aliases (e.g., \"sidebar\", \"footer\", \"MainWindowPluginFrame\") defined by the core.\nPermissions: Public get / try_get methods are open to all plugins.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                },
+                {
+                    "title": "2. RedactableDataRegistry (Data Registry)",
+                    "content": "Purpose: A universal store for class objects, logic modules, settings, or primitive variables (int, str, bool).",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Access Type",
+                                "Description"
+                            ],
+                            "rows": [
+                                [
+                                    "READ Access",
+                                    "get / try_get methods are restricted. They can only be invoked through PluginContext. Accessing them from the Global Scope will trigger a PermissionError."
+                                ],
+                                [
+                                    "WRITE Access",
+                                    "bind / bind_by_type methods are open, allowing plugins to share their own objects or data with others."
+                                ]
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Usage",
+                    "content": "from Registers import ui_registry as uireg, redactable_data_registry as rdr",
+                    "is_code": true,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                }
+            ]
+        },
+        {
+            "title": "UI INTERFACE",
+            "id": "section-1773241000003",
+            "weight": 2,
+            "text": "Methods for mounting and managing user interface elements.",
+            "blocks": [
+                {
+                    "title": "Mounting Methods",
+                    "content": "",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Method",
+                                "Description / Arguments"
+                            ],
+                            "rows": [
+                                [
+                                    "mount_ui(anchor_name, widget_cls, weight=-1, **kwargs)",
+                                    "Mounts a widget into a predefined core frame.\n- anchor_name (str): Target frame alias from UIRegistry.\n- widget_cls (class): The widget class to instantiate (e.g., ctk.CTkButton).\n- weight (int): Sorting order. 0 for top, 100 for bottom, -1 to append.\n- **kwargs: Args passed directly to the widget (text, command, etc)."
+                                ],
+                                [
+                                    "add_to_window(widget_cls, weight=-1, **kwargs)",
+                                    "Adds a widget to the plugin's private dedicated window."
+                                ],
+                                [
+                                    "set_window_content(frame_cls, **kwargs)",
+                                    "Replaces the entire content of the plugin window with a new container (e.g., ctk.CTkScrollableFrame). This clears the window before insertion."
+                                ]
+                            ]
+                        },
+                        {
+                            "headers": [
+                                "Unmounting",
+                                "Description"
+                            ],
+                            "rows": [
+                                [
+                                    "unmount_ui(widget_instance)",
+                                    "Removes a specific widget instance from the UI."
+                                ],
+                                [
+                                    "unmount_all()",
+                                    "Instantly destroys all UI elements created by the plugin."
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "PLUGIN WINDOW MANAGEMENT",
+            "id": "section-1773241000004",
+            "weight": 2,
+            "text": "Controls for the plugin-specific window.",
+            "blocks": [
+                {
+                    "title": "Window API",
+                    "content": "",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Method",
+                                "Function"
+                            ],
+                            "rows": [
+                                [
+                                    "get_window(title, min_size=(400,300), max_size=None, fix_size=None)",
+                                    "Initializes the window. Use fix_size='500x500' to disable resizing."
+                                ],
+                                [
+                                    "Window States",
+                                    "show_window(), hide_window(), lift_window(), center_window() - Standard controls."
+                                ],
+                                [
+                                    "set_window_title(text)",
+                                    "Updates the window title dynamically."
+                                ],
+                                [
+                                    "set_close_handler(callback)",
+                                    "Sets a function to be executed when the window's close (X) button is pressed."
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "DATA & RESOURCES",
+            "id": "section-1773241000005",
+            "weight": 3,
+            "text": "Handling external files and remote data.",
+            "blocks": [
+                {
+                    "title": "Methods",
+                    "content": "",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "Method",
+                                "Description"
+                            ],
+                            "rows": [
+                                [
+                                    "update_remote_value(registry_key, attr_name, new_value)",
+                                    "Updates an attribute of an object or a primitive in RedactableDataRegistry. Type must match."
+                                ],
+                                [
+                                    "get_resource(path)",
+                                    "Returns bytes of a file located inside the .nlp package (e.g., 'assets/icon.png')."
+                                ],
+                                [
+                                    "save_config(data, name='config.json')",
+                                    "Store a dictionary in the application's AppData folder."
+                                ],
+                                [
+                                    "load_config(name='config.json')",
+                                    "Retrieve a dictionary from the application's AppData folder."
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "title": "SERVICE",
+            "id": "section-1773241000006",
+            "weight": 3,
+            "text": "Utility tools and properties.",
+            "blocks": [
+                {
+                    "title": "Logging & Core Access",
+                    "content": "log(message, level=\"INFO\"): Sends a message to the core logger. Levels: \"INFO\", \"WARN\", \"ERROR\".\nmain_window (Property): A direct reference to the main application window. Use this as the master for your own custom Toplevel windows or complex widgets.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                }
+            ]
+        },
+        {
+            "title": "QUICK START GUIDE",
+            "id": "section-1773241000007",
+            "weight": 4,
+            "text": "Step-by-step guide to build and deploy your plugin.",
+            "blocks": [
+                {
+                    "title": "1. Directory Structure",
+                    "content": "MyPlugin/\n├── manifest.json      # Metadata (required)\n├── main.py            # Entry point (required)\n├── assets/            # Resources (optional)\n└── libs/              # External .pyd/.py libraries (optional)",
+                    "is_code": true,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                },
+                {
+                    "title": "2. Manifest (manifest.json)",
+                    "content": "{\n    \"id\": \"unique_id_1\",\n    \"name\": \"My Plugin\",\n    \"version\": \"1.0.5\",\n    \"main_class\": \"MainClass\"\n}",
+                    "is_code": true,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                },
+                {
+                    "title": "3. Entry Point (main.py)",
+                    "content": "class MainClass:\n    def __init__(self, ctx):\n        self.ctx = ctx  # Bridge to the API\n\n    def on_enable(self):\n        self.ctx.log(\"Plugin activated!\")\n        self.ctx.mount_ui(\"MainWindowPluginFrame\", ctk.CTkButton, text=\"Click Me!\", weight=0)",
+                    "is_code": true,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                },
+                {
+                    "title": "4. Deployment",
+                    "content": "1. Select the contents of MyPlugin/.\n2. Create a ZIP archive.\n3. Rename the extension to .nlp.\n4. Place it in %APPDATA%/NL-clicker/plugins/.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                }
+            ]
+        }
+    ]
+}
