@@ -8,6 +8,83 @@
             "blocks": []
         },
         {
+            "title": "DEVELOPMENT SDK",
+            "id": "section-sdk-intro",
+            "weight": 1,
+            "text": "The NL-Clicker SDK provides essential stub files to enable IDE support and prevent linting errors during development.",
+            "blocks": [
+                {
+                    "title": "SDK Components",
+                    "content": "These files act as placeholders (stubs) for the IDE, as the real API is injected by the Core at runtime. Using them ensures your code remains clean and free of false 'ImportError' warnings.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": [
+                        {
+                            "headers": [
+                                "File",
+                                "Purpose"
+                            ],
+                            "rows": [
+                                [
+                                    "nl_sdk.py",
+                                    "Stubs for PluginContext. Provides IntelliSense for UI, Window, and Data methods."
+                                ],
+                                [
+                                    "nl_sdk_registers.py",
+                                    "Stubs for uireg and rdr. Prevents 'ModuleNotFound' errors in local IDE."
+                                ],
+                                [
+                                    "plugin_main_template.py",
+                                    "Boilerplate reflecting the required plugin structure."
+                                ],
+                                [
+                                    "tester.py",
+                                    "A minimal script for basic syntax verification."
+                                ],
+                                [
+                                    "manifest.json",
+                                    "Template metadata file with all required fields."
+                                ]
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Manifest Example (manifest.json)",
+                    "content": "The manifest must be placed in the root of your plugin directory. It defines how the core identifies and loads your module.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                },
+                {
+                    "title": "JSON Structure",
+                    "content": "{\n    \"id\": \"unique.plugin.id\",\n    \"name\": \"Plugin Display Name\",\n    \"version\": \"1.0.0\",\n    \"author\": \"Developer Name\",\n    \"description\": \"Brief description of features\",\n    \"main_class\": \"MyPlugin\",\n    \"min_app_version\": \"1.0.0\",\n    \"dependencies\": [\"customtkinter\"]\n}",
+                    "is_code": true,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                },
+                {
+                    "title": "Modern Entry Point Example (main.py)",
+                    "content": "Use 'TYPE_CHECKING' to leverage SDK stubs during development while allowing the core to inject real objects at runtime.",
+                    "is_code": false,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                },
+                {
+                    "title": "Implementation Code",
+                    "content": "import customtkinter as ctk\nfrom typing import TYPE_CHECKING\n\nif TYPE_CHECKING:\n    # IDE-only stubs\n    from nl_sdk_registers import ui_registry as uireg, redactable_data_registry as rdr\n    from nl_sdk import PluginContext\nelse:\n    # Real core injection\n    try:\n        from Registers import ui_registry as uireg, redactable_data_registry as rdr\n    except ImportError:\n        uireg, rdr = None, None\n\nclass MyPlugin:\n    def __init__(self, ctx: 'PluginContext'):\n        self.ctx = ctx\n\n    def on_enable(self):\n        if rdr:\n            rdr.bind(f'{self.ctx.id}_active', True)\n        self.ctx.log('Plugin initialized!')",
+                    "is_code": true,
+                    "expanded": true,
+                    "blocks": [],
+                    "tables": []
+                }
+            ]
+        },
+        {
             "title": "REGISTRY ARCHITECTURE",
             "id": "section-1773241000002",
             "weight": 1,
