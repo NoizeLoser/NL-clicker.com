@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Docs for plugin Dev's</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'nl-black': '#050505',
+                        'nl-dark': '#0f0f0f',
+                        'nl-card': '#1a1a1a',
+                        'nl-maroon': '#800000',
+                        'nl-red': '#dc2626',
+                        'nl-border': '#2d0000',
+                        'nl-gray': '#9ca3af',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4,0,0.6,1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px rgba(128,0,0,0.5), 0 0 20px rgba(128,0,0,0.3)' },
+                            '100%': { boxShadow: '0 0 10px rgba(220,38,38,0.8), 0 0 40px rgba(220,38,38,0.4)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Inter', sans-serif
+        }
+
+        body {
+            background: #050505;
+            color: #fff
+        }
+
+        .glass-panel {
+            background: rgba(26, 26, 26, .8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(128, 0, 0, .3);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #800000 0%, #dc2626 50%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all .3s
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #800000, #dc2626);
+            transition: width .3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #800000;
+            border-radius: 4px
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dc2626
+        }
+
+        .block-content {
+            display: none;
+            transition: opacity .2s
+        }
+
+        .block-content.active {
+            display: block
+        }
+
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(128, 0, 0, .2), rgba(220, 38, 38, .1));
+            border: 1px solid rgba(128, 0, 0, .2);
+        }
+    </style>
+</head>
+
+<body class="nl-black">
+
+    <div class="flex min-h-screen">
+
+        <main id="main" class="flex-1 overflow-y-auto p-8 space-y-10">
+
+        </main>
+
+        <aside class="w-72 flex-shrink-0 sticky top-0 h-screen p-4 overflow-y-auto bg-nl-dark">
+            <h2 class="text-xl font-bold mb-4 gradient-text">Table of Contents</h2>
+            <nav id="toc" class="space-y-2"></nav>
+        </aside>
+    </div>
+
+    <script>
+        function copyToClipboard(txt) {
+            navigator.clipboard.writeText(txt).then(() => {
+                const toast = document.createElement('div');
+                toast.textContent = 'Copied!';
+                toast.className = 'fixed inset-x-0 bottom-8 mx-auto w-24 py-1 text-center bg-nl-red text-white rounded';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 1500);
+            });
+        }
+
+        function buildBlock(sectionId, block, idx) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'mb-4 ml-2 border-l border-nl-red/10 pl-3';
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'w-full flex justify-between items-center p-3 glass-panel rounded cursor-pointer hover:bg-white/5';
+                btn.innerHTML = `
+                <span class="font-medium text-nl-gray text-sm">${block.title || 'Block'}</span>
+                <span class="arrow text-nl-gray">${block.expanded ? '▴' : '▾'}</span>
+            `;
+                wrapper.appendChild(btn);
+
+                const content = document.createElement('div');
+                content.className = 'block-content glass-panel rounded-b p-4';
+                content.style.display = block.expanded ? 'block' : 'none';
+
+                if (block.content) {
+                    if (block.is_code) {
+                        const pre = document.createElement('pre');
+                        pre.className = 'bg-nl-card p-3 rounded overflow-x-auto text-sm relative mb-4';
+                        const code = document.createElement('code');
+                        code.textContent = block.content;
+                        pre.appendChild(code);
+
+                        if (block.copyable) {
+                            const cp = document.createElement('button');
+                            cp.className = 'absolute top-2 right-2 px-2 py-1 bg-nl-red text-white text-xs rounded';
+                            cp.textContent = 'Copy';
+                            cp.onclick = (e) => { e.stopPropagation(); copyToClipboard(block.content); };
+                            pre.appendChild(cp);
+                        }
+                        content.appendChild(pre);
+                    } else {
+                        const p = document.createElement('p');
+                        p.className = 'text-nl-gray text-sm whitespace-pre-wrap break-words mb-4';
+                        p.textContent = block.content;
+                        content.appendChild(p);
+                    }
+                }
+
+                if (block.tables && Array.isArray(block.tables)) {
+                    block.tables.forEach(t => content.appendChild(buildTable(t)));
+                }
+
+                if (block.blocks && Array.isArray(block.blocks)) {
+                    block.blocks.forEach((sub, sIdx) => {
+                        content.appendChild(buildBlock(sectionId, sub, sIdx));
+                    });
+                }
+
+                wrapper.appendChild(content);
+
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isVisible = content.style.display === 'block';
+                    content.style.display = isVisible ? 'none' : 'block';
+                    btn.querySelector('.arrow').textContent = isVisible ? '▾' : '▴';
+                });
+
+                return wrapper;
+            }
+
+        function buildTable(tableData) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'overflow-x-auto my-6 glass-panel rounded border border-white/10';
+
+            let html = '<table class="w-full text-left border-collapse">';
+
+            if (tableData.headers) {
+                html += '<thead class="bg-white/10 text-nl-red uppercase text-xs"><tr>';
+                tableData.headers.forEach(h => html += `<th class="px-4 py-3 border-b border-white/10">${h}</th>`);
+                html += '</tr></thead>';
+            }
+
+            html += '<tbody>';
+            tableData.rows.forEach(row => {
+                html += '<tr class="border-b border-white/5">';
+                row.forEach(cell => html += `<td class="px-4 py-2 text-nl-gray text-sm">${cell}</td>`);
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+
+            wrapper.innerHTML = html;
+            return wrapper;
+        }
+
+        function renderDoc(doc) {
+            const main = document.getElementById('main');
+            const toc = document.getElementById('toc');
+            const sizeMap = { 0: 'text-4xl', 1: 'text-3xl', 2: 'text-2xl', 3: 'text-xl', 4: 'text-lg' };
+
+            doc.sections.forEach(section => {
+                const weight = (section.weight !== undefined) ? section.weight : 2;
+                const indentClass = `pl-${weight * 4}`;
+                const sectionWrapper = document.createElement('div');
+                sectionWrapper.className = `mb-10 ${indentClass}`;
+
+                const heading = document.createElement('h2');
+                heading.id = section.id;
+                heading.className = `gradient-text font-bold py-2 sticky top-0 bg-nl-black ${sizeMap[weight] || 'text-2xl'} border-l-2 border-nl-red/20 pl-4`;
+                heading.textContent = section.title;
+                sectionWrapper.appendChild(heading);
+
+                if (section.text) {
+                    const card = document.createElement('div');
+                    card.className = 'gradient-card glass-panel rounded p-4 mb-6 mt-2';
+                    const p = document.createElement('p');
+                    p.className = 'text-nl-gray whitespace-pre-wrap break-words';
+                    p.textContent = section.text;
+                    card.appendChild(p);
+                    sectionWrapper.appendChild(card);
+                }
+
+                if (section.tables && Array.isArray(section.tables)) {
+                    console.log(`Найдено таблиц в секции ${section.id}:`, section.tables.length);
+                    section.tables.forEach(tableData => {
+                        const tableEl = buildTable(tableData);
+                        sectionWrapper.appendChild(tableEl);
+                    });
+                } else {
+                    console.warn(`В секции ${section.id} таблиц не обнаружено или формат неверный.`);
+                }
+
+                (section.blocks || []).forEach((blk, idx) => {
+                    const blkEl = buildBlock(section.id, blk, idx);
+                    sectionWrapper.appendChild(blkEl);
+                });
+
+                main.appendChild(sectionWrapper);
+
+                const tocLink = document.createElement('a');
+                tocLink.href = `#${section.id}`;
+                const tocSizeMap = { 0: 'text-lg font-bold', 1: 'text-base font-semibold', 2: 'text-sm font-medium' };
+                const tocIndent = weight * 2;
+                tocLink.className = `block py-1 transition-all text-nl-gray hover:text-nl-red ml-${tocIndent} ${tocSizeMap[weight] || 'text-sm'}`;
+                tocLink.textContent = section.title;
+                toc.appendChild(tocLink);
+            });
+        }
+
+        async function loadDoc() {
+            try {
+                const r = await fetch('data/pluginDevDoc.json');
+                if (!r.ok) throw new Error(`HTTP ${r.status}`);;
+                const doc = await r.json();
+
+                renderDoc(doc);
+            } catch (e) {
+                console.error('❗ Unable to load doc JSON:', e);
+                document.getElementById('main').innerHTML =
+                    `<p class="text-nl-red">⚡ Failed to load documentation. Check console for details.</p>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDoc);
+    </script>
+</body>
+
+</html>
