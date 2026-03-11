@@ -62,7 +62,8 @@
                     "title": "JSON Structure",
                     "content": "{\n    \"id\": \"unique.plugin.id\",\n    \"name\": \"Plugin Display Name\",\n    \"version\": \"1.0.0\",\n    \"author\": \"Developer Name\",\n    \"description\": \"Brief description of features\",\n    \"main_class\": \"MyPlugin\",\n    \"min_app_version\": \"1.0.0\",\n    \"dependencies\": [\"customtkinter\"]\n}",
                     "is_code": true,
-                    "expanded": true,
+                    "expanded": false,
+                    "copyable": true,
                     "blocks": [],
                     "tables": []
                 },
@@ -78,7 +79,7 @@
                     "title": "Implementation Code",
                     "content": "import customtkinter as ctk\nfrom typing import TYPE_CHECKING\n\nif TYPE_CHECKING:\n    # IDE-only stubs\n    from nl_sdk_registers import ui_registry as uireg, redactable_data_registry as rdr\n    from nl_sdk import PluginContext\nelse:\n    # Real core injection\n    try:\n        from Registers import ui_registry as uireg, redactable_data_registry as rdr\n    except ImportError:\n        uireg, rdr = None, None\n\nclass MyPlugin:\n    def __init__(self, ctx: 'PluginContext'):\n        self.ctx = ctx\n\n    def on_enable(self):\n        if rdr:\n            rdr.bind(f'{self.ctx.id}_active', True)\n        self.ctx.log('Plugin initialized!')",
                     "is_code": true,
-                    "expanded": true,
+                    "expanded": false,
                     "blocks": [],
                     "tables": []
                 }
@@ -94,7 +95,7 @@
                     "title": "1. UIRegistry (Anchor Registry)",
                     "content": "Purpose: Stores references to the physical frames (ctk.CTkFrame) of the main application.\nAccess: Publicly accessible within the application scope. Plugins access these via string aliases defined by the core or other plugins.\n",
                     "is_code": false,
-                    "expanded": true,
+                    "expanded": false,
                     "blocks": [],
                     "tables": [
                         {
@@ -163,7 +164,7 @@
                     "title": "2. RedactableDataRegistry (Data Registry)",
                     "content": "Purpose: A universal store for class objects, modules, or primitive variables. Features strict caller validation.",
                     "is_code": false,
-                    "expanded": true,
+                    "expanded": false,
                     "blocks": [],
                     "tables": [
                         {
