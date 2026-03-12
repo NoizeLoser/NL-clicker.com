@@ -159,20 +159,31 @@
                         const code = document.createElement('code');
                         code.textContent = block.content;
                         pre.appendChild(code);
+                        const cp = document.createElement('button');
+                        cp.className = 'absolute top-2 right-2 px-2 py-1 bg-nl-red text-white text-xs rounded';
+                        cp.textContent = 'Copy';
+                        cp.onclick = (e) => { e.stopPropagation(); copyToClipboard(block.content); };
+                        pre.appendChild(cp);
 
-                        if (block.copyable) {
-                            const cp = document.createElement('button');
-                            cp.className = 'absolute top-2 right-2 px-2 py-1 bg-nl-red text-white text-xs rounded';
-                            cp.textContent = 'Copy';
-                            cp.onclick = (e) => { e.stopPropagation(); copyToClipboard(block.content); };
-                            pre.appendChild(cp);
-                        }
                         content.appendChild(pre);
                     } else {
+                        const pWrapper = document.createElement('div');
+                        pWrapper.className = 'relative group';
+
                         const p = document.createElement('p');
                         p.className = 'text-nl-gray text-sm whitespace-pre-wrap break-words mb-4';
                         p.textContent = block.content;
-                        content.appendChild(p);
+                        pWrapper.appendChild(p);
+
+                        if (block.copyable) {
+                            const cp = document.createElement('button');
+                            cp.className = 'absolute -top-2 right-0 px-2 py-1 bg-nl-red/50 hover:bg-nl-red text-white text-[10px] rounded transition-all';
+                            cp.textContent = 'Copy Text';
+                            cp.onclick = (e) => { e.stopPropagation(); copyToClipboard(block.content); };
+                            pWrapper.appendChild(cp);
+                        }
+
+                        content.appendChild(pWrapper);
                     }
                 }
 
