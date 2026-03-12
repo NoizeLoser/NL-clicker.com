@@ -222,7 +222,6 @@
             return wrapper;
         }
 
-
         function renderDoc(doc) {
             const main = document.getElementById('main');
             const toc = document.getElementById('toc');
@@ -234,8 +233,9 @@
                 const sectionWrapper = document.createElement('div');
                 sectionWrapper.className = `mb-10 ${indentClass}`;
 
+                const safeId = section.id || section.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
                 const heading = document.createElement('h2');
-                heading.id = section.id;
+                heading.id = safeId;
                 heading.className = `gradient-text font-bold py-2 sticky top-0 z-10 bg-nl-black ${sizeMap[weight] || 'text-2xl'} border-l-2 border-nl-red/20 pl-4`;
                 heading.textContent = section.title;
                 sectionWrapper.appendChild(heading);
@@ -268,7 +268,7 @@
                 main.appendChild(sectionWrapper);
 
                 const tocLink = document.createElement('a');
-                tocLink.href = `#${section.id}`;
+                tocLink.href = `#${safeId}`;
                 const tocSizeMap = { 0: 'text-lg font-bold', 1: 'text-base font-semibold', 2: 'text-sm font-medium' };
                 const tocIndent = weight * 2;
                 tocLink.className = `block py-1 transition-all text-nl-gray hover:text-nl-red ml-${tocIndent} ${tocSizeMap[weight] || 'text-sm'}`;
