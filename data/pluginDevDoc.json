@@ -2,14 +2,14 @@
     "sections": [
         {
             "title": "NL-Clicker Plugin API SDK",
-            "id": "section-1773241000001",
+            "id": "",
             "weight": 0,
             "text": "Reference documentation for developing plugins for the NL-Clicker application.",
             "blocks": []
         },
         {
             "title": "DEVELOPMENT SDK",
-            "id": "section-sdk-intro",
+            "id": "",
             "weight": 1,
             "text": "The NL-Clicker SDK provides essential stub files to enable IDE support and prevent linting errors during development.",
             "blocks": [
@@ -87,7 +87,7 @@
         },
         {
             "title": "REGISTRY ARCHITECTURE",
-            "id": "section-1773241000002",
+            "id": "",
             "weight": 1,
             "text": "The system utilizes two global repositories (Singletons) to facilitate communication between the plugin and the core.",
             "blocks": [
@@ -221,7 +221,7 @@
         },
         {
             "title": "PLUGIN LIFECYCLE",
-            "id": "section-lifecycle",
+            "id": "",
             "weight": 2,
             "text": "Understanding how the core triggers plugin logic.",
             "blocks": [
@@ -254,7 +254,7 @@
         },
         {
             "title": "PLUGIN CONTEXT API",
-            "id": "section-plugin-context-root",
+            "id": "",
             "weight": 1,
             "text": "The PluginContext class serves as the primary interface for plugins to interact with the core application. It acts as a secure sandbox and service provider, granting access to UI mounting, window management, and persistent storage.",
             "blocks": [
@@ -303,7 +303,7 @@
         },
         {
             "title": "UI INTERFACE",
-            "id": "section-1773241000003",
+            "id": "",
             "weight": 2,
             "text": "Methods for mounting, managing, and disposing of user interface elements within the core application or dedicated plugin windows.",
             "blocks": [
@@ -402,7 +402,7 @@
         },
         {
             "title": "PLUGIN WINDOW MANAGEMENT",
-            "id": "section-1773241000004",
+            "id": "",
             "weight": 2,
             "text": "Comprehensive controls for the plugin's dedicated Toplevel window.",
             "blocks": [
@@ -480,7 +480,7 @@
         },
         {
             "title": "DATA & RESOURCES",
-            "id": "section-1773241000005",
+            "id": "",
             "weight": 2,
             "text": "Methods for interacting with the plugin's package resources, persistent storage, and remote registry synchronization.",
             "blocks": [
@@ -542,7 +542,7 @@
         },
         {
             "title": "SERVICE & UTILITIES",
-            "id": "section-1773241000006",
+            "id": "",
             "weight": 2,
             "text": "Auxiliary tools for system logging and direct core access.",
             "blocks": [
@@ -575,7 +575,7 @@
         },
         {
             "title": "QUICK START GUIDE",
-            "id": "section-1773241000007",
+            "id": "",
             "weight": 1,
             "text": "Follow these steps to build, package, and deploy your first functional plugin for the system.",
             "blocks": [
@@ -615,7 +615,7 @@
         },
         {
             "title": "EXTERNAL LIBRARIES",
-            "id": "section-libs-management",
+            "id": "",
             "weight": 2,
             "text": "The system features an automated dependency manager for external Python modules.",
             "blocks": [
