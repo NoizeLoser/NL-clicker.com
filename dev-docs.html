@@ -111,19 +111,18 @@
     </style>
 </head>
 
-<body class="nl-black">
+<body class="nl-black h-screen flex flex-col">
 
-    <div class="flex min-h-screen">
-
-        <main id="main" class="flex-1 overflow-y-auto p-8 space-y-10">
-
-        </main>
-
-        <aside class="w-72 flex-shrink-0 sticky top-0 h-screen p-4 overflow-y-auto bg-nl-dark">
-            <h2 class="text-xl font-bold mb-4 gradient-text">Table of Contents</h2>
+    <main class="flex-1 flex overflow-visible h-full">
+    
+        <div id="main" class="flex-1 overflow-y-auto p-8 space-y-10 bg-nl-black relative">
+        </div>
+    
+        <aside class="w-64 flex-shrink-0 border-l border-nl-border p-4 overflow-y-auto bg-nl-dark h-full">
+            <h2 class="text-lg font-bold mb-4 gradient-text">Table of Contents</h2>
             <nav id="toc" class="space-y-2"></nav>
         </aside>
-    </div>
+    </main>
 
     <script>
         function copyToClipboard(txt) {
