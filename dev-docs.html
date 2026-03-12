@@ -228,14 +228,18 @@
             const sizeMap = { 0: 'text-4xl', 1: 'text-3xl', 2: 'text-2xl', 3: 'text-xl', 4: 'text-lg' };
 
             doc.sections.forEach(section => {
+                const safeId = (section.id && section.id.trim() !== "")
+                    ? section.id
+                    : section.title.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
                 const weight = (section.weight !== undefined) ? section.weight : 2;
                 const indentClass = `pl-${weight * 4}`;
-                const sectionWrapper = document.createElement('div');
-                sectionWrapper.className = `mb-10 ${indentClass}`;
 
-                const safeId = section.id || section.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                const sectionWrapper = document.createElement('div');
+                sectionWrapper.id = safeId;
+                sectionWrapper.className = `mb-10 ${indentClass} relative`;
+
                 const heading = document.createElement('h2');
-                heading.id = safeId;
                 heading.className = `gradient-text font-bold py-2 sticky top-0 z-10 bg-nl-black ${sizeMap[weight] || 'text-2xl'} border-l-2 border-nl-red/20 pl-4`;
                 heading.textContent = section.title;
                 sectionWrapper.appendChild(heading);
@@ -251,28 +255,31 @@
                 }
 
                 if (section.tables && Array.isArray(section.tables)) {
-                    console.log(`Найдено таблиц в секции ${section.id}:`, section.tables.length);
                     section.tables.forEach(tableData => {
-                        const tableEl = buildTable(tableData);
-                        sectionWrapper.appendChild(tableEl);    
+                        sectionWrapper.appendChild(buildTable(tableData));
                     });
-                } else {
-                    console.warn(`В секции ${section.id} таблиц не обнаружено или формат неверный.`);
                 }
 
                 (section.blocks || []).forEach((blk, idx) => {
-                    const blkEl = buildBlock(section.id, blk, idx);
-                    sectionWrapper.appendChild(blkEl);
+                    sectionWrapper.appendChild(buildBlock(section.id, blk, idx));
                 });
 
                 main.appendChild(sectionWrapper);
 
                 const tocLink = document.createElement('a');
-                tocLink.href = `#${safeId}`;
+                tocLink.href = 'javascript:void(0)';
                 const tocSizeMap = { 0: 'text-lg font-bold', 1: 'text-base font-semibold', 2: 'text-sm font-medium' };
                 const tocIndent = weight * 2;
-                tocLink.className = `block py-1 transition-all text-nl-gray hover:text-nl-red ml-${tocIndent} ${tocSizeMap[weight] || 'text-sm'}`;
+                tocLink.className = `block py-1 transition-all text-nl-gray hover:text-nl-red cursor-pointer ml-${tocIndent} ${tocSizeMap[weight] || 'text-sm'}`;
                 tocLink.textContent = section.title;
+
+                tocLink.onclick = () => {
+                    const target = document.getElementById(safeId);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                };
+
                 toc.appendChild(tocLink);
             });
         }
